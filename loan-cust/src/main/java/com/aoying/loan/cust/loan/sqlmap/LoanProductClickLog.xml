@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<!--【loanproductclicklog 贷款产品点击日志】sql -->
+<mapper namespace="com.aoying.loan.cust.loan.dao.LoanProductClickLogDao">
+	<!-- ==============================非基础操作======================================= -->
+
+	<sql id="getAllCreateTime">
+		`createTime` BETWEEN
+		<choose>
+			<when test="createTimeBegin != null"> #{createTimeBegin} </when>
+			<otherwise> '2018-01-01 00:00:00' </otherwise>
+		</choose>
+		AND
+		<choose>
+			<when test="createTimeEnd != null"> #{createTimeEnd} </when>
+			<otherwise> '2118-01-01 00:00:00' </otherwise>
+		</choose>
+	</sql>
+
+	<sql id="getAllLoginTime">
+		ci.`loginByAppTime` BETWEEN
+		<choose>
+			<when test="createTimeBegin != null"> #{createTimeBegin} </when>
+			<otherwise> '2018-01-01 00:00:00' </otherwise>
+		</choose>
+		AND
+		<choose>
+			<when test="createTimeEnd != null"> #{createTimeEnd} </when>
+			<otherwise> '2118-01-01 00:00:00' </otherwise>
+		</choose>
+	</sql>
+
+	<sql id="getAllCurr">
+		SELECT ci.`channelId` chId, COUNT(*) register, SUM(IF(<include refid="getAllLoginTime"></include>, 1, 0)) activation, SUM(IF(log.c IS NOT NULL, 1 ,0)) visitor, SUM(IFNULL(log.c, 0)) uv, SUM(IFNULL(rpt.c, 0)) report FROM
+		(SELECT * FROM `custinfo` WHERE <include refid="getAllCreateTime"></include>) ci LEFT JOIN
+		(SELECT `custId`, COUNT(DISTINCT `productId`) c FROM `loanproductclicklog` WHERE <include refid="getAllCreateTime"></include> GROUP BY `custId`) log ON ci.id = log.custId LEFT JOIN
+		(SELECT `custId` , COUNT(*) c FROM `loanreport` WHERE <include refid="getAllCreateTime"></include> AND `status` = 21 GROUP BY `custId`) rpt ON ci.id = rpt.custId
+		GROUP BY ci.`channelId` ORDER BY register DESC
+	</sql>
+
+	<sql id="getAllTotal">
+		SELECT ci.`channelId` chId, COUNT(*) register, SUM(IF(ci.`loginByAppTime` IS NOT NULL, 1, 0)) activation, SUM(IF(log.c IS NOT NULL, 1 ,0)) visitor, SUM(IFNULL(log.c, 0)) uv, SUM(IFNULL(rpt.c, 0)) report FROM
+		(SELECT * FROM `custinfo`) ci LEFT JOIN
+		(SELECT `custId`, COUNT(DISTINCT `productId`) c FROM `loanproductclicklog` GROUP BY `custId`) log ON ci.id = log.custId LEFT JOIN
+		(SELECT `custId` , COUNT(*) c FROM `loanreport` WHERE `status` = 21 GROUP BY `custId`) rpt ON ci.id = rpt.custId
+		GROUP BY ci.`channelId` ORDER BY register DESC
+	</sql>
+
+	<select id="getAll" parameterType="com.aoying.loan.cust.loan.pojo.LoanProductClickLogPojo" resultType="map">
+		SELECT CONCAT(ch.`name`, '(', ch.`id`, ')') channel
+		,t1.register currRegister, t1.activation currActivation, t1.visitor currVisitor, t1.uv currUv, t1.report currReport
+		,t2.register totalRegister, t2.activation totalActivation, t2.visitor totalVisitor, t2.uv totalUv, t2.report totalReport
+		FROM (<include refid="getAllCurr"></include>) t1
+		LEFT JOIN (<include refid="getAllTotal"></include>) t2 ON t1.chId = t2.chId
+		LEFT JOIN `appchannel` ch on t1.chId = ch.`id`
+	</select>
+
+	<select id="getChClick" parameterType="com.aoying.loan.cust.loan.pojo.LoanProductClickLogPojo" resultType="map">
+		<![CDATA[
+			select ch.name, t.t1 pv, t.t2 uv, t.t1/t.t2 average from
+			(select c.channelId chId, count(1) t1, count(distinct l.custId) t2 from loanProductClickLog l
+			left join custInfo c on l.custId = c.id
+		]]>
+		<where>
+			<if test="createTimeBegin != null"><![CDATA[ and l.createTime >= #{createTimeBegin} ]]></if>
+			<if test="createTimeEnd != null"><![CDATA[ and l.createTime <= #{createTimeEnd} ]]></if>
+		</where>
+		<![CDATA[
+			group by c.channelId) t left join appChannel ch on t.chId = ch.id
+		]]>
+	</select>
+
+	<select id="getProClick" parameterType="com.aoying.loan.cust.loan.pojo.LoanProductClickLogPojo" resultType="map">
+		<![CDATA[
+			select pro.name, t.t1 pv, t.t2 uv, t.t1/t.t2 average from
+			(select productId proId, count(1) t1, count(distinct custId) t2 from loanProductClickLog
+		]]>
+		<where>
+			<if test="createTimeBegin != null"><![CDATA[ and createTime >= #{createTimeBegin} ]]></if>
+			<if test="createTimeEnd != null"><![CDATA[ and createTime <= #{createTimeEnd} ]]></if>
+		</where>
+		<![CDATA[
+			group by productId) t left join loanProduct pro on t.proId = pro.id
+		]]>
+	</select>
+	
+	<!-- ==============================基础操作======================================= -->
+	<!--根据条件得到列表 -->
+	<select id="selectList" parameterType="com.aoying.loan.cust.loan.pojo.LoanProductClickLogPojo" resultType="com.aoying.loan.cust.loan.pojo.LoanProductClickLogPojo">
+		<![CDATA[ 
+			SELECT id,productId,channelId,custId,createTime
+			FROM loanproductclicklog 
+		]]>
+	</select>
+
+	<!--根据id得到记录 -->
+	<select id="selectUnique" parameterType="com.aoying.loan.cust.loan.pojo.LoanProductClickLogPojo" resultType="com.aoying.loan.cust.loan.pojo.LoanProductClickLogPojo">
+		<![CDATA[ 
+			SELECT id,productId,channelId,custId,createTime
+			FROM loanproductclicklog WHERE id = #{id}
+		]]>
+	</select>
+
+	<!-- 新增记录 -->
+	<insert id="insert" parameterType="com.aoying.loan.cust.loan.pojo.LoanProductClickLogPojo"
+		useGeneratedKeys="true"	keyProperty="id" keyColumn="id">
+		<![CDATA[ 
+			INSERT INTO loanproductclicklog (
+			    id,productId,channelId,custId,createTime
+			) VALUES (
+				#{id},#{productId},#{channelId},#{custId},#{createTime}
+			)
+		]]>
+	</insert>
+	
+	<!-- 批量新增记录 -->
+	<insert id="insertList" parameterType="com.aoying.loan.cust.loan.pojo.LoanProductClickLogPojo">
+		<![CDATA[ 
+			INSERT INTO loanproductclicklog (
+			    id,productId,channelId,custId,createTime
+			) VALUES (
+				#{id},#{productId},#{channelId},#{custId},#{createTime}
+			)
+		]]>
+	</insert>
+	
+	<!-- 修改记录 -->
+	<update id="update" parameterType="com.aoying.loan.cust.loan.pojo.LoanProductClickLogPojo">
+		<![CDATA[ UPDATE loanproductclicklog]]>
+		<set>
+	 		<if test="id != null"><![CDATA[ id = #{id},]]></if>
+	 		<if test="productId != null"><![CDATA[ productId = #{productId},]]></if>
+	 		<if test="channelId != null"><![CDATA[ channelId = #{channelId},]]></if>
+	 		<if test="custId != null"><![CDATA[ custId = #{custId},]]></if>
+	 		<if test="createTime != null"><![CDATA[ createTime = #{createTime},]]></if>
+		</set>
+		 <![CDATA[ WHERE id = #{id} ]]>
+	</update>
+	
+	<!-- 删除记录 -->
+	<update id="delete" parameterType="com.aoying.loan.cust.loan.pojo.LoanProductClickLogPojo">
+		<![CDATA[ DELETE FROM loanproductclicklog where id = #{id} ]]>
+	</update>
+</mapper> 

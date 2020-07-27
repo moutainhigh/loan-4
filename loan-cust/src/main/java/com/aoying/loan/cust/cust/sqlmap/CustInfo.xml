@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<!--【custinfo 用户信息表】sql -->
+<mapper namespace="com.aoying.loan.cust.cust.dao.CustInfoDao">
+	<!-- ==============================非基础操作======================================= -->
+	<select id="getRegByCh" parameterType="com.aoying.loan.cust.cust.pojo.CustInfoPojo" resultType="map">
+		<![CDATA[ SELECT IF(date IS NULL,'总计',date) date, sum ]]>
+		<foreach collection="chIdArr" index="index" item="item">
+			, ch#{index}
+		</foreach>
+		<![CDATA[ FROM (SELECT LEFT(i.createTime, 10) date, COUNT(1) sum ]]>
+		<foreach collection="chIdArr" index="index" item="item">
+				, SUM(IF(i.channelId=#{item},1,0)) ch#{index}
+		</foreach>
+		<![CDATA[ FROM custInfo i LEFT JOIN appChannel c ON i.channelId = c.id ]]>
+		<where>
+			<if test="createTimeBegin != null"><![CDATA[ and i.createTime >= #{createTimeBegin} ]]></if>
+			<if test="createTimeEnd != null"><![CDATA[ and i.createTime <= #{createTimeEnd} ]]></if>
+			<if test="chIdStr != null and chIdStr != ''"> and i.channelId in
+				<foreach collection="chIdArr" index="index" item="item" open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+		</where>
+		<![CDATA[ GROUP BY date WITH ROLLUP ) t ORDER BY date DESC ]]>
+	</select>
+
+	<select id="getRegAll" parameterType="com.aoying.loan.cust.cust.pojo.CustInfoPojo" resultType="map">
+		<![CDATA[
+			SELECT IF(name IS NULL,'总计',name) name, sum FROM (
+
+				SELECT c.name name, COUNT(1) sum
+				FROM custInfo i LEFT JOIN appChannel c ON i.channelId = c.id
+		]]>
+		<where>
+			<if test="createTimeBegin != null"><![CDATA[ and i.createTime >= #{createTimeBegin} ]]></if>
+			<if test="createTimeEnd != null"><![CDATA[ and i.createTime <= #{createTimeEnd} ]]></if>
+		</where>
+		<![CDATA[
+				GROUP BY c.name WITH ROLLUP
+
+			) t ORDER BY sum DESC
+		]]>
+	</select>
+
+	<select id="getRegistrationData" resultType="map">
+		<![CDATA[ select sum(if(left(createTime,10)=curdate(),1,0)) today, count(1) total from custInfo ]]>
+	</select>
+
+	<select id="getById" parameterType="com.aoying.loan.cust.cust.pojo.CustInfoPojo" resultType="com.aoying.loan.cust.cust.pojo.CustInfoPojo">
+		<![CDATA[
+			SELECT c.id,c.telNoEnc,c.loginPwd,c.wxOpenId,c.name,c.headImg,c.deviceId,c.deviceType,c.appId,
+				c.channelId,c.pwdErrDate,c.pwdErrTimes,c.telNoUpdateErrTimes,c.createTime,c.modTime,c.status,c.agreement,c.vipExpTime,
+				id.idCardCodeEnc as idCardCodeHide,id.idCardNameEnc as idCardNameHide,id.idCardCodeEnc,id.idCardNameEnc,
+				(select ifnull(status, 0) from loanApplication where custId = c.id) as applicationStatus,
+				(select id from loanReportOperators where custId = c.id and status = 21 limit 1) as optId,
+				(select id from loanReportAssessment where custId = c.id and status = 21 limit 1) as assId,
+				(select id from loanReport where custId = c.id and status = 21 limit 1) as reportId
+			FROM custinfo c
+			LEFT JOIN custIdCard id ON id.custId = c.id AND id.status = 1
+			WHERE c.id = #{id}
+		]]>
+	</select>
+	
+	<!-- ==============================基础操作======================================= -->
+	<!--根据条件得到列表 -->
+	<select id="selectList" parameterType="com.aoying.loan.cust.cust.pojo.CustInfoPojo" resultType="com.aoying.loan.cust.cust.pojo.CustInfoPojo">
+		<![CDATA[ 
+			SELECT id,telNoEnc,loginPwd,wxOpenId,name,headImg,deviceId,deviceType,appId,
+				channelId,pwdErrDate,pwdErrTimes,telNoUpdateErrTimes,createTime,modTime,status,agreement,vipExpTime
+			FROM custinfo 
+		]]>
+	</select>
+
+	<!--根据id得到记录 -->
+	<select id="selectUnique" parameterType="com.aoying.loan.cust.cust.pojo.CustInfoPojo" resultType="com.aoying.loan.cust.cust.pojo.CustInfoPojo">
+		<![CDATA[ 
+			SELECT c.id,c.telNoEnc,c.loginPwd,c.wxOpenId,c.name,c.headImg,c.deviceId,c.deviceType,c.appId,
+				c.channelId,c.pwdErrDate,c.pwdErrTimes,c.telNoUpdateErrTimes,c.createTime,c.modTime,c.status,c.agreement,vipExpTime,
+				id.idCardCodeEnc as idCardCodeHide,id.idCardNameEnc as idCardNameHide,id.idCardNameEnc
+			FROM custinfo c
+			LEFT JOIN custIdCard id ON id.custId = c.id AND id.status = 1
+		]]>
+		<where>
+			<choose>
+				<when test="id != null"> c.id = #{id} </when>
+				<when test="telNoEnc != null and telNoEnc != ''"> c.telNoEnc = #{telNoEnc} </when>
+				<when test="wxOpenId != null and wxOpenId != ''"> c.wxOpenId = #{wxOpenId} </when>
+				<otherwise>1 = 0</otherwise>
+			</choose>
+		</where>
+	</select>
+
+	<!-- 新增记录 -->
+	<insert id="insert" parameterType="com.aoying.loan.cust.cust.pojo.CustInfoPojo"
+		useGeneratedKeys="true"	keyProperty="id" keyColumn="id">
+		<![CDATA[ 
+			INSERT INTO custinfo (
+			    id,telNoEnc,loginPwd,wxOpenId,name,headImg,deviceId,deviceType,appId,
+				channelId,loginByAppTime,createTime,modTime,status,agreement,vipExpTime
+			) VALUES (
+				#{id},#{telNoEnc},#{loginPwd},#{wxOpenId},#{name},#{headImg},#{deviceId},#{deviceType},#{appId},
+				#{channelId},#{loginByAppTime},#{createTime},#{modTime},#{status},#{agreement},#{vipExpTime}
+			)
+		]]>
+	</insert>
+	
+	<!-- 批量新增记录 -->
+	<insert id="insertList" parameterType="com.aoying.loan.cust.cust.pojo.CustInfoPojo">
+		<![CDATA[ 
+			INSERT INTO custinfo (
+			    id,telNoEnc,loginPwd,wxOpenId,name,headImg,deviceId,deviceType,appId,
+				channelId,loginByAppTime,pwdErrDate,pwdErrTimes,telNoUpdateErrTimes,createTime,modTime,status,agreement,vipExpTime
+			) VALUES (
+				#{id},#{telNoEnc},#{loginPwd},#{wxOpenId},#{name},#{headImg},#{deviceId},#{deviceType},#{appId},
+				#{channelId},#{loginByAppTime},#{pwdErrDate},#{pwdErrTimes},#{telNoUpdateErrTimes},#{createTime},#{modTime},#{status},#{agreement},#{vipExpTime}
+			)
+		]]>
+	</insert>
+	
+	<!-- 修改记录 -->
+	<update id="update" parameterType="com.aoying.loan.cust.cust.pojo.CustInfoPojo">
+		<![CDATA[ UPDATE custinfo]]>
+		<set>
+	 		<if test="telNoEnc != null and telNoEnc != ''"><![CDATA[ telNoEnc = #{telNoEnc},]]></if>
+			<if test="loginPwd != null and loginPwd != ''"><![CDATA[ loginPwd = #{loginPwd},]]></if>
+			<if test="wxOpenId != null and wxOpenId != ''"><![CDATA[ wxOpenId = #{wxOpenId},]]></if>
+	 		<if test="name != null and name != ''"><![CDATA[ name = #{name},]]></if>
+	 		<if test="headImg != null and headImg != ''"><![CDATA[ headImg = #{headImg},]]></if>
+	 		<if test="deviceId != null and deviceId != ''"><![CDATA[ deviceId = #{deviceId},]]></if>
+	 		<if test="deviceType != null"><![CDATA[ deviceType = #{deviceType},]]></if>
+	 		<if test="appId != null"><![CDATA[ appId = #{appId},]]></if>
+			<if test="channelId != null"><![CDATA[ channelId = #{channelId},]]></if>
+			<if test="loginByAppTime != null"><![CDATA[ loginByAppTime = #{loginByAppTime},]]></if>
+	 		<if test="pwdErrDate != null"><![CDATA[ pwdErrDate = #{pwdErrDate},]]></if>
+	 		<if test="pwdErrTimes != null"><![CDATA[ pwdErrTimes = #{pwdErrTimes},]]></if>
+	 		<if test="telNoUpdateErrTimes != null"><![CDATA[ telNoUpdateErrTimes = #{telNoUpdateErrTimes},]]></if>
+	 		<if test="createTime != null"><![CDATA[ createTime = #{createTime},]]></if>
+	 		<if test="modTime != null"><![CDATA[ modTime = #{modTime},]]></if>
+			<if test="status != null"><![CDATA[ status = #{status},]]></if>
+			<if test="agreement != null"><![CDATA[ agreement = #{agreement},]]></if>
+			<if test="vipExpTime != null"><![CDATA[ vipExpTime = #{vipExpTime},]]></if>
+		</set>
+		 <![CDATA[ WHERE id = #{id} ]]>
+	</update>
+	
+	<!-- 删除记录 -->
+	<update id="delete" parameterType="com.aoying.loan.cust.cust.pojo.CustInfoPojo">
+		<![CDATA[ DELETE FROM custinfo where id = #{id} ]]>
+	</update>
+</mapper> 

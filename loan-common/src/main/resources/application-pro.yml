@@ -1,0 +1,82 @@
+# 数据库
+common:
+    mysql:
+        url: rm-uf6t0xfbprp1g1rdl.mysql.rds.aliyuncs.com
+        port: 3306
+        dbname: loancust
+        username: loancust
+        password: ay2018loanCust
+    jedis:
+        hosts:
+            host_1: 127.0.0.1:6379
+
+# 依炫微信支付
+wxPayCfgOfYiXuan:
+    appID: wx28ddc709cc7e97b7
+    mchID: 1522729781
+    key: f910e4ad54ad4f5c758add2ae26f901e
+    certPath: /wxpay/apiclient_cert_yixuan.p12
+    domain: api.mch.weixin.qq.com
+    notifyUrl: http://ws.91loaning.com/wx/pay/notify
+
+# 布丁白卡微信支付
+wxPayCfgOfBaiKa:
+    appID: wxf4f130e6037cc799
+    mchID: 1516061021
+    key: 872cf0852b794676a5c498effdc80ad3
+    certPath: /wxpay/apiclient_cert_baika.p12
+    domain: api.mch.weixin.qq.com
+    notifyUrl: http://ws.91loaning.com/wx/pay/notify
+
+# 鏖鹰微信支付
+wxPayCfgOfAoYing:
+    appID: wxf284578d4d724b9a
+    mchID: 1519030731
+    key: 20b282e519e7e8e4e069647463a16d35
+    certPath: /wxpay/apiclient_cert_aoying.p12
+    domain: api.mch.weixin.qq.com
+    notifyUrl: http://ws.91loaning.com/wx/pay/notify
+
+# 新颜配置
+xinYanCfg:
+    memberId: 8150717535
+    terminalId: 8150717535
+    pfxPath: /home/aoying/application/loan-cust/xinyan/8150717535_pri.pfx
+    pfxPwd: 190121
+    domain: api.xinyan.com
+
+# 行列秩配置
+dsCfg:
+    url: https://api.detrank.com/s100
+    key: DokBp5W0DNQqx9Wx
+    memberId: 100029
+    subChannelName: 依炫科技
+
+# 定时任务
+taskCfg:
+    # 更新申请人数，每次随机增加0～3人，每10分钟执行一次
+    updateApplyNumTask:
+        cron: 0 0/10 * * * ?
+    # 更新昨日对外渠道数据，插入今日对外渠道数据
+    insertAppChannelRecordTask:
+        cron: 1 0 0 * * ?
+    updateAppChannelRecordTask:
+        cron: 0 0/1 * * * ?
+    updateApplyAuditStatusTask:
+        cron: 0 0/10 * * * ?
+        min: 120
+
+# 系统配置
+sysCfg:
+    isRelease: true
+    idCardAuthLimit: 3 #每个账号每天实名次数限制
+    loanReportLimit: 1 #每个账号每天报告次数限制
+    loanReportUpdateLimit: 604800000 #报告X天之后可更新
+    fileService:
+        accessDir: http://res.91loaning.com/loanProduct
+
+# spring-cloud
+eureka:
+    client:
+        registerWithEureka: false
+        fetchRegistry: false

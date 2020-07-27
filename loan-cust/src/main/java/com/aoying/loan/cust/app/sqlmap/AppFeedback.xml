@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<!--【appfeedback APP反馈信息表】sql -->
+<mapper namespace="com.aoying.loan.cust.app.dao.AppFeedbackDao">
+	<!-- ==============================非基础操作======================================= -->
+	
+	<!-- ==============================基础操作======================================= -->
+	<!--根据条件得到列表 -->
+	<select id="selectList" parameterType="com.aoying.loan.cust.app.pojo.AppFeedbackPojo" resultType="com.aoying.loan.cust.app.pojo.AppFeedbackPojo">
+		<![CDATA[ 
+			SELECT id,appId,name,telNoEnc,kinds,content,imgUrl,createTime
+				
+			FROM appfeedback 
+		]]>
+	</select>
+
+	<!--根据id得到记录 -->
+	<select id="selectUnique" parameterType="com.aoying.loan.cust.app.pojo.AppFeedbackPojo" resultType="com.aoying.loan.cust.app.pojo.AppFeedbackPojo">
+		<![CDATA[ 
+			SELECT id,appId,name,telNoEnc,kinds,content,imgUrl,createTime
+				
+			FROM appfeedback WHERE id = #{id}
+		]]>
+	</select>
+
+	<!-- 新增记录 -->
+	<insert id="insert" parameterType="com.aoying.loan.cust.app.pojo.AppFeedbackPojo"
+		useGeneratedKeys="true"	keyProperty="id" keyColumn="id">
+		<![CDATA[ 
+			INSERT INTO appfeedback (
+			    id,appId,name,telNoEnc,kinds,content,imgUrl,createTime
+				
+			) VALUES (
+				#{id},#{appId},#{name},#{telNoEnc},#{kinds},#{content},#{imgUrl},#{createTime}
+				
+			)
+		]]>
+	</insert>
+	
+	<!-- 批量新增记录 -->
+	<insert id="insertList" parameterType="com.aoying.loan.cust.app.pojo.AppFeedbackPojo">
+		<![CDATA[ 
+			INSERT INTO appfeedback (
+			    id,appId,name,telNoEnc,kinds,content,imgUrl,createTime
+				
+			) VALUES (
+				#{id},#{appId},#{name},#{telNoEnc},#{kinds},#{content},#{imgUrl},#{createTime}
+				
+			)
+		]]>
+	</insert>
+	
+	<!-- 修改记录 -->
+	<update id="update" parameterType="com.aoying.loan.cust.app.pojo.AppFeedbackPojo">
+		<![CDATA[ UPDATE appfeedback]]>
+		<set>
+	 		<if test="id != null"><![CDATA[ id = #{id},]]></if>
+	 		<if test="appId != null"><![CDATA[ appId = #{appId},]]></if>
+	 		<if test="name != null and name != ''"><![CDATA[ name = #{name},]]></if>
+	 		<if test="telNoEnc != null and telNoEnc != ''"><![CDATA[ telNoEnc = #{telNoEnc},]]></if>
+	 		<if test="kinds != null"><![CDATA[ kinds = #{kinds},]]></if>
+	 		<if test="content != null and content != ''"><![CDATA[ content = #{content},]]></if>
+	 		<if test="imgUrl != null and imgUrl != ''"><![CDATA[ imgUrl = #{imgUrl},]]></if>
+	 		<if test="createTime != null"><![CDATA[ createTime = #{createTime},]]></if>
+		</set>
+		 <![CDATA[ WHERE id = #{id} ]]>
+	</update>
+	
+	<!-- 删除记录 -->
+	<update id="delete" parameterType="com.aoying.loan.cust.app.pojo.AppFeedbackPojo">
+		<![CDATA[ DELETE FROM appfeedback where id = #{id} ]]>
+	</update>
+</mapper> 

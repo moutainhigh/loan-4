@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<!--【loanapplicationforlarge 大额贷款申请】sql -->
+<mapper namespace="com.aoying.loan.cust.loan.dao.LoanApplicationForLargeDao">
+	<!-- ==============================非基础操作======================================= -->
+	
+	<!-- ==============================基础操作======================================= -->
+	<!--根据条件得到列表 -->
+	<select id="selectList" parameterType="com.aoying.loan.cust.loan.pojo.LoanApplicationForLargePojo" resultType="com.aoying.loan.cust.loan.pojo.LoanApplicationForLargePojo">
+		<![CDATA[ 
+			SELECT id,telNoEnc,idCardCodeEnc,idCardNameEnc,city,sex,age,monthlyIncome,
+				loanAmount,hasHouse,hasCar,hasInsurance,hasAccumulationFund,hasSocialSecurity,industry,education,
+				loanPurpose,channelId,createrId,createrName,createTime,modId,modName,modTime,submitCode,status,remark
+			FROM loanapplicationforlarge 
+		]]>
+		<where>
+			<if test="createTimeBegin != null and createTimeBegin != ''"><![CDATA[ AND createTime >= #{createTimeBegin} ]]></if>
+			<if test="createTimeEnd != null and createTimeEnd != ''"><![CDATA[ AND createTime <= #{createTimeEnd} ]]></if>
+			<if test="channelId != null"><![CDATA[ AND channelId = #{channelId} ]]></if>
+			<if test="city != null and city != ''"><![CDATA[ AND city = #{city} ]]></if>
+			<if test="submitCode != null and submitCode != ''"><![CDATA[ AND submitCode LIKE #{submitCode} ]]></if>
+		</where>
+	</select>
+
+	<!--根据id得到记录 -->
+	<select id="selectUnique" parameterType="com.aoying.loan.cust.loan.pojo.LoanApplicationForLargePojo" resultType="com.aoying.loan.cust.loan.pojo.LoanApplicationForLargePojo">
+		<![CDATA[ 
+			SELECT id,telNoEnc,idCardCodeEnc,idCardNameEnc,city,sex,age,monthlyIncome,
+				loanAmount,hasHouse,hasCar,hasInsurance,hasAccumulationFund,hasSocialSecurity,industry,education,
+				loanPurpose,channelId,createrId,createrName,createTime,modId,modName,modTime,submitCode,status,remark
+			FROM loanapplicationforlarge
+		]]>
+		<where>
+			<choose>
+				<when test="id != null"> id = #{id} </when>
+				<when test="telNoEnc != null and telNoEnc != ''"> telNoEnc = #{telNoEnc} and createrId = #{createrId} </when>
+				<otherwise>1 = 0</otherwise>
+			</choose>
+		</where>
+	</select>
+
+	<!-- 新增记录 -->
+	<insert id="insert" parameterType="com.aoying.loan.cust.loan.pojo.LoanApplicationForLargePojo"
+		useGeneratedKeys="true"	keyProperty="id" keyColumn="id">
+		<![CDATA[ 
+			INSERT INTO loanapplicationforlarge (
+			    id,telNoEnc,idCardCodeEnc,idCardNameEnc,city,sex,age,monthlyIncome,
+				loanAmount,hasHouse,hasCar,hasInsurance,hasAccumulationFund,hasSocialSecurity,industry,education,
+				loanPurpose,channelId,createrId,createrName,createTime,modId,modName,modTime,submitCode,status,remark
+			) VALUES (
+				#{id},#{telNoEnc},#{idCardCodeEnc},#{idCardNameEnc},#{city},#{sex},#{age},#{monthlyIncome},
+				#{loanAmount},#{hasHouse},#{hasCar},#{hasInsurance},#{hasAccumulationFund},#{hasSocialSecurity},#{industry},#{education},
+				#{loanPurpose},#{channelId},#{createrId},#{createrName},#{createTime},#{modId},#{modName},#{modTime},#{submitCode},#{status},#{remark}
+			)
+		]]>
+	</insert>
+	
+	<!-- 批量新增记录 -->
+	<insert id="insertList" parameterType="com.aoying.loan.cust.loan.pojo.LoanApplicationForLargePojo">
+		<![CDATA[ 
+			INSERT INTO loanapplicationforlarge (
+			    id,telNoEnc,idCardCodeEnc,idCardNameEnc,city,sex,age,monthlyIncome,
+				loanAmount,hasHouse,hasCar,hasInsurance,hasAccumulationFund,hasSocialSecurity,industry,education,
+				loanPurpose,channelId,createrId,createrName,createTime,modId,modName,modTime,submitCode,status,remark
+			) VALUES (
+				#{id},#{telNoEnc},#{idCardCodeEnc},#{idCardNameEnc},#{city},#{sex},#{age},#{monthlyIncome},
+				#{loanAmount},#{hasHouse},#{hasCar},#{hasInsurance},#{hasAccumulationFund},#{hasSocialSecurity},#{industry},#{education},
+				#{loanPurpose},#{channelId},#{createrId},#{createrName},#{createTime},#{modId},#{modName},#{modTime},#{submitCode},#{status},#{remark}
+			)
+		]]>
+	</insert>
+	
+	<!-- 修改记录 -->
+	<update id="update" parameterType="com.aoying.loan.cust.loan.pojo.LoanApplicationForLargePojo">
+		<![CDATA[ UPDATE loanapplicationforlarge]]>
+		<set>
+	 		<if test="id != null"><![CDATA[ id = #{id},]]></if>
+	 		<if test="telNoEnc != null and telNoEnc != ''"><![CDATA[ telNoEnc = #{telNoEnc},]]></if>
+			<if test="idCardCodeEnc != null and idCardCodeEnc != ''"><![CDATA[ idCardCodeEnc = #{idCardCodeEnc},]]></if>
+			<if test="idCardNameEnc != null and idCardNameEnc != ''"><![CDATA[ idCardNameEnc = #{idCardNameEnc},]]></if>
+	 		<if test="city != null and city != ''"><![CDATA[ city = #{city},]]></if>
+	 		<if test="sex != null"><![CDATA[ sex = #{sex},]]></if>
+	 		<if test="age != null"><![CDATA[ age = #{age},]]></if>
+	 		<if test="monthlyIncome != null and monthlyIncome != ''"><![CDATA[ monthlyIncome = #{monthlyIncome},]]></if>
+	 		<if test="loanAmount != null and loanAmount != ''"><![CDATA[ loanAmount = #{loanAmount},]]></if>
+	 		<if test="hasHouse != null"><![CDATA[ hasHouse = #{hasHouse},]]></if>
+	 		<if test="hasCar != null"><![CDATA[ hasCar = #{hasCar},]]></if>
+	 		<if test="hasInsurance != null"><![CDATA[ hasInsurance = #{hasInsurance},]]></if>
+	 		<if test="hasAccumulationFund != null"><![CDATA[ hasAccumulationFund = #{hasAccumulationFund},]]></if>
+	 		<if test="hasSocialSecurity != null"><![CDATA[ hasSocialSecurity = #{hasSocialSecurity},]]></if>
+	 		<if test="industry != null and industry != ''"><![CDATA[ industry = #{industry},]]></if>
+	 		<if test="education != null and education != ''"><![CDATA[ education = #{education},]]></if>
+			<if test="loanPurpose != null and loanPurpose != ''"><![CDATA[ loanPurpose = #{loanPurpose},]]></if>
+			<if test="channelId != null"><![CDATA[ channelId = #{channelId},]]></if>
+			<if test="createrId != null"><![CDATA[ createrId = #{createrId},]]></if>
+			<if test="createrName != null and createrName != ''"><![CDATA[ createrName = #{createrName},]]></if>
+			<if test="createTime != null"><![CDATA[ createTime = #{createTime},]]></if>
+			<if test="modId != null"><![CDATA[ modId = #{modId},]]></if>
+			<if test="modName != null and modName != ''"><![CDATA[ modName = #{modName},]]></if>
+			<if test="modTime != null"><![CDATA[ modTime = #{modTime},]]></if>
+	 		<if test="submitCode != null and submitCode != ''"><![CDATA[ submitCode = #{submitCode},]]></if>
+	 		<if test="status != null"><![CDATA[ status = #{status},]]></if>
+	 		<if test="remark != null and remark != ''"><![CDATA[ remark = #{remark},]]></if>
+		</set>
+		 <![CDATA[ WHERE id = #{id} ]]>
+	</update>
+	
+	<!-- 删除记录 -->
+	<update id="delete" parameterType="com.aoying.loan.cust.loan.pojo.LoanApplicationForLargePojo">
+		<![CDATA[ DELETE FROM loanapplicationforlarge where id = #{id} ]]>
+	</update>
+</mapper> 

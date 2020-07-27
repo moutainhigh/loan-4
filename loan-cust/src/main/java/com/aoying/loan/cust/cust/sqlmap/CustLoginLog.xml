@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<!--【custloginlog 用户登陆日志】sql -->
+<mapper namespace="com.aoying.loan.cust.cust.dao.CustLoginLogDao">
+	<!-- ==============================非基础操作======================================= -->
+	
+	<!-- ==============================基础操作======================================= -->
+	<!--根据条件得到列表 -->
+	<select id="selectList" parameterType="com.aoying.loan.cust.cust.pojo.CustLoginLogPojo" resultType="com.aoying.loan.cust.cust.pojo.CustLoginLogPojo">
+		<![CDATA[ 
+			SELECT id,custId,appId,appVerText,wxOpenId,deviceId,ip,lng,
+				lat,provinceName,cityName,countyName,address,loginDate,loginTime
+			FROM custloginlog 
+		]]>
+	</select>
+
+	<!--根据id得到记录 -->
+	<select id="selectUnique" parameterType="com.aoying.loan.cust.cust.pojo.CustLoginLogPojo" resultType="com.aoying.loan.cust.cust.pojo.CustLoginLogPojo">
+		<![CDATA[ 
+			SELECT id,custId,appId,appVerText,wxOpenId,deviceId,ip,lng,
+				lat,provinceName,cityName,countyName,address,loginDate,loginTime
+			FROM custloginlog WHERE id = #{id}
+		]]>
+	</select>
+
+	<!-- 新增记录 -->
+	<insert id="insert" parameterType="com.aoying.loan.cust.cust.pojo.CustLoginLogPojo"
+		useGeneratedKeys="true"	keyProperty="id" keyColumn="id">
+		<![CDATA[ 
+			INSERT INTO custloginlog (
+			    id,custId,appId,appVerText,wxOpenId,deviceId,ip,lng,
+				lat,provinceName,cityName,countyName,address,loginDate,loginTime
+			) VALUES (
+				#{id},#{custId},#{appId},#{appVerText},#{wxOpenId},#{deviceId},#{ip},#{lng},
+				#{lat},#{provinceName},#{cityName},#{countyName},#{address},#{loginDate},#{loginTime}
+			)
+		]]>
+	</insert>
+	
+	<!-- 批量新增记录 -->
+	<insert id="insertList" parameterType="com.aoying.loan.cust.cust.pojo.CustLoginLogPojo">
+		<![CDATA[ 
+			INSERT INTO custloginlog (
+			    id,custId,appId,appVerText,wxOpenId,deviceId,ip,lng,
+				lat,provinceName,cityName,countyName,address,loginDate,loginTime
+			) VALUES (
+				#{id},#{custId},#{appId},#{appVerText},#{wxOpenId},#{deviceId},#{ip},#{lng},
+				#{lat},#{provinceName},#{cityName},#{countyName},#{address},#{loginDate},#{loginTime}
+			)
+		]]>
+	</insert>
+	
+	<!-- 修改记录 -->
+	<update id="update" parameterType="com.aoying.loan.cust.cust.pojo.CustLoginLogPojo">
+		<![CDATA[ UPDATE custloginlog]]>
+		<set>
+	 		<if test="id != null"><![CDATA[ id = #{id},]]></if>
+	 		<if test="custId != null"><![CDATA[ custId = #{custId},]]></if>
+	 		<if test="appId != null"><![CDATA[ appId = #{appId},]]></if>
+	 		<if test="appVerText != null and appVerText != ''"><![CDATA[ appVerText = #{appVerText},]]></if>
+	 		<if test="wxOpenId != null and wxOpenId != ''"><![CDATA[ wxOpenId = #{wxOpenId},]]></if>
+	 		<if test="deviceId != null and deviceId != ''"><![CDATA[ deviceId = #{deviceId},]]></if>
+	 		<if test="ip != null and ip != ''"><![CDATA[ ip = #{ip},]]></if>
+	 		<if test="lng != null"><![CDATA[ lng = #{lng},]]></if>
+	 		<if test="lat != null"><![CDATA[ lat = #{lat},]]></if>
+	 		<if test="provinceName != null and provinceName != ''"><![CDATA[ provinceName = #{provinceName},]]></if>
+	 		<if test="cityName != null and cityName != ''"><![CDATA[ cityName = #{cityName},]]></if>
+	 		<if test="countyName != null and countyName != ''"><![CDATA[ countyName = #{countyName},]]></if>
+	 		<if test="address != null and address != ''"><![CDATA[ address = #{address},]]></if>
+	 		<if test="loginDate != null"><![CDATA[ loginDate = #{loginDate},]]></if>
+	 		<if test="loginTime != null"><![CDATA[ loginTime = #{loginTime},]]></if>
+		</set>
+		 <![CDATA[ WHERE id = #{id} ]]>
+	</update>
+	
+	<!-- 删除记录 -->
+	<update id="delete" parameterType="com.aoying.loan.cust.cust.pojo.CustLoginLogPojo">
+		<![CDATA[ DELETE FROM custloginlog where id = #{id} ]]>
+	</update>
+</mapper> 

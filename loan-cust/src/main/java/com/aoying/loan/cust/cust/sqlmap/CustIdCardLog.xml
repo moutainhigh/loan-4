@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<!--【custidcard 用户身份证表】sql -->
+<mapper namespace="com.aoying.loan.cust.cust.dao.CustIdCardLogDao">
+	<!-- ==============================非基础操作======================================= -->
+	<select id="selectTodayNumByCustId" parameterType="com.aoying.loan.cust.cust.pojo.CustIdCardLogPojo" resultType="int">
+		<![CDATA[
+			SELECT count(1) FROM custIdCardLog WHERE custId = #{custId} AND createTime > CURDATE()
+		]]>
+	</select>
+
+	<select id="selectSuccOneByIdCardCode" parameterType="com.aoying.loan.cust.cust.pojo.CustIdCardLogPojo" resultType="com.aoying.loan.cust.cust.pojo.CustIdCardLogPojo">
+		<![CDATA[
+			SELECT id,custId,idCardCodeEnc,idCardNameEnc,sex,birthday,createTime,status,checkMode
+			FROM custIdCardLog WHERE idCardCodeEnc = #{idCardCodeEnc} AND status = 1 LIMIT 1
+		]]>
+	</select>
+	
+	<!-- ==============================基础操作======================================= -->
+	<!--根据条件得到列表 -->
+	<select id="selectList" parameterType="com.aoying.loan.cust.cust.pojo.CustIdCardLogPojo" resultType="com.aoying.loan.cust.cust.pojo.CustIdCardLogPojo">
+		<![CDATA[ 
+			SELECT id,custId,idCardCodeEnc,idCardNameEnc,createTime,status,checkMode,resultJson
+			FROM custIdCardLog
+		]]>
+	</select>
+
+	<!--根据id得到记录 -->
+	<select id="selectUnique" parameterType="com.aoying.loan.cust.cust.pojo.CustIdCardLogPojo" resultType="com.aoying.loan.cust.cust.pojo.CustIdCardLogPojo">
+		<![CDATA[ 
+			SELECT id,custId,idCardCodeEnc,idCardNameEnc,createTime,status,checkMode,resultJson
+			FROM custIdCardLog
+		]]>
+		<where>
+			<choose>
+				<when test="id != null">id = #{id}</when>
+				<otherwise>1 = 0</otherwise>
+			</choose>
+		</where>
+	</select>
+
+	<!-- 新增记录 -->
+	<insert id="insert" parameterType="com.aoying.loan.cust.cust.pojo.CustIdCardLogPojo"
+		useGeneratedKeys="true"	keyProperty="id" keyColumn="id">
+		<![CDATA[ 
+			INSERT INTO custIdCardLog (
+			    id,custId,idCardCodeEnc,idCardNameEnc,createTime,status,checkMode,resultJson
+			) VALUES (
+				#{id},#{custId},#{idCardCodeEnc},#{idCardNameEnc},#{createTime},#{status},#{checkMode},#{resultJson}
+			)
+		]]>
+	</insert>
+	
+	<!-- 批量新增记录 -->
+	<insert id="insertList" parameterType="com.aoying.loan.cust.cust.pojo.CustIdCardLogPojo">
+		<![CDATA[ 
+			INSERT INTO custIdCardLog (
+			    id,custId,idCardCodeEnc,idCardNameEnc,createTime,status,checkMode,resultJson
+			) VALUES (
+				#{id},#{custId},#{idCardCodeEnc},#{idCardNameEnc},#{createTime},#{status},#{checkMode},#{resultJson}
+			)
+		]]>
+	</insert>
+	
+	<!-- 修改记录 -->
+	<update id="update" parameterType="com.aoying.loan.cust.cust.pojo.CustIdCardLogPojo">
+		<![CDATA[ UPDATE custIdCardLog]]>
+		<set>
+			<if test="id != null"><![CDATA[ id = #{id},]]></if>
+			<if test="custId != null"><![CDATA[ custId = #{custId},]]></if>
+	 		<if test="idCardCodeEnc != null and idCardCodeEnc != ''"><![CDATA[ idCardCodeEnc = #{idCardCodeEnc},]]></if>
+	 		<if test="idCardNameEnc != null and idCardNameEnc != ''"><![CDATA[ idCardNameEnc = #{idCardNameEnc},]]></if>
+	 		<if test="createTime != null"><![CDATA[ createTime = #{createTime},]]></if>
+			<if test="status != null"><![CDATA[ status = #{status},]]></if>
+			<if test="checkMode != null"><![CDATA[ checkMode = #{checkMode},]]></if>
+			<if test="resultJson != null"><![CDATA[ resultJson = #{resultJson},]]></if>
+		</set>
+		 <![CDATA[ WHERE id = #{id} ]]>
+	</update>
+	
+	<!-- 删除记录 -->
+	<update id="delete" parameterType="com.aoying.loan.cust.cust.pojo.CustIdCardLogPojo">
+		<![CDATA[ DELETE FROM custIdCardLog where id = #{id} ]]>
+	</update>
+</mapper> 

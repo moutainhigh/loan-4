@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<!--【tradeorder 交易订单】sql -->
+<mapper namespace="com.aoying.loan.cust.trade.dao.TradeOrderDao">
+	<!-- ==============================非基础操作======================================= -->
+	
+	<!-- ==============================基础操作======================================= -->
+	<!--根据条件得到列表 -->
+	<select id="selectList" parameterType="com.aoying.loan.cust.trade.pojo.TradeOrderPojo" resultType="com.aoying.loan.cust.trade.pojo.TradeOrderPojo">
+		<![CDATA[ 
+			SELECT id,custId,tradeNo,goodsId,goodsName,goodsAmount,goodsDetailId,
+			idCardNameEnc as idCardNameHide,idCardCodeEnc as idCardCodeHide,telNoEnc as telNoHide,
+			idCardNameEnc,idCardCodeEnc,telNoEnc,
+			createTime,payType,payTime,queryResult,queryTime,status
+			FROM tradeorder 
+		]]>
+		<where>
+			<if test="custId != null"><![CDATA[ AND custId = #{custId} ]]></if>
+		</where>
+			ORDER BY id DESC
+	</select>
+
+	<!--根据id得到记录 -->
+	<select id="selectUnique" parameterType="com.aoying.loan.cust.trade.pojo.TradeOrderPojo" resultType="com.aoying.loan.cust.trade.pojo.TradeOrderPojo">
+		<![CDATA[ 
+			SELECT id,custId,tradeNo,goodsId,goodsName,goodsAmount,goodsDetailId,
+			idCardNameEnc as idCardNameHide,idCardCodeEnc as idCardCodeHide,telNoEnc as telNoHide,
+			idCardNameEnc,idCardCodeEnc,telNoEnc,
+			createTime,payType,payTime,queryResult,queryTime,status
+			FROM tradeorder
+		]]>
+		<where>
+			<choose>
+				<when test="id != null"> id = #{id} </when>
+				<when test="tradeNo != null and tradeNo != ''"> tradeNo = #{tradeNo} </when>
+				<otherwise> 1 = 0 </otherwise>
+			</choose>
+			<if test="custId != null"><![CDATA[ AND custId = #{custId} ]]></if>
+			<if test="status != null"><![CDATA[ AND status = #{status} ]]></if>
+		</where>
+	</select>
+
+	<!-- 新增记录 -->
+	<insert id="insert" parameterType="com.aoying.loan.cust.trade.pojo.TradeOrderPojo"
+		useGeneratedKeys="true"	keyProperty="id" keyColumn="id">
+		<![CDATA[ 
+			INSERT INTO tradeorder (
+			    id,custId,tradeNo,goodsId,goodsName,goodsAmount,goodsDetailId,idCardNameEnc,idCardCodeEnc,telNoEnc,createTime,payType,
+				payTime,queryResult,queryTime,status
+			) VALUES (
+				#{id},#{custId},#{tradeNo},#{goodsId},#{goodsName},#{goodsAmount},#{goodsDetailId},#{idCardNameEnc},#{idCardCodeEnc},#{telNoEnc},#{createTime},#{payType},
+				#{payTime},#{queryResult},#{queryTime},#{status}
+			)
+		]]>
+	</insert>
+	
+	<!-- 批量新增记录 -->
+	<insert id="insertList" parameterType="com.aoying.loan.cust.trade.pojo.TradeOrderPojo">
+		<![CDATA[ 
+			INSERT INTO tradeorder (
+			    id,custId,tradeNo,goodsId,goodsName,goodsAmount,goodsDetailId,idCardNameEnc,idCardCodeEnc,telNoEnc,createTime,payType,
+				payTime,queryResult,queryTime,status
+			) VALUES (
+				#{id},#{custId},#{tradeNo},#{goodsId},#{goodsName},#{goodsAmount},,#{goodsDetailId},#{idCardNameEnc},#{idCardCodeEnc},#{telNoEnc},#{createTime},#{payType},
+				#{payTime},#{queryResult},#{queryTime},#{status}
+			)
+		]]>
+	</insert>
+	
+	<!-- 修改记录 -->
+	<update id="update" parameterType="com.aoying.loan.cust.trade.pojo.TradeOrderPojo">
+		<![CDATA[ UPDATE tradeorder]]>
+		<set>
+	 		<if test="id != null"><![CDATA[ id = #{id},]]></if>
+	 		<if test="custId != null"><![CDATA[ custId = #{custId},]]></if>
+	 		<if test="tradeNo != null and tradeNo != ''"><![CDATA[ tradeNo = #{tradeNo},]]></if>
+	 		<if test="goodsId != null"><![CDATA[ goodsId = #{goodsId},]]></if>
+	 		<if test="goodsName != null and goodsName != ''"><![CDATA[ goodsName = #{goodsName},]]></if>
+			<if test="goodsAmount != null"><![CDATA[ goodsAmount = #{goodsAmount},]]></if>
+			<if test="goodsDetailId != null"><![CDATA[ goodsDetailId = #{goodsDetailId},]]></if>
+			<if test="idCardNameEnc != null and idCardNameEnc != ''"><![CDATA[ idCardNameEnc = #{idCardNameEnc},]]></if>
+			<if test="idCardCodeEnc != null and idCardCodeEnc != ''"><![CDATA[ idCardCodeEnc = #{idCardCodeEnc},]]></if>
+			<if test="telNoEnc != null and telNoEnc != ''"><![CDATA[ telNoEnc = #{telNoEnc},]]></if>
+	 		<if test="createTime != null"><![CDATA[ createTime = #{createTime},]]></if>
+	 		<if test="payType != null"><![CDATA[ payType = #{payType},]]></if>
+	 		<if test="payTime != null"><![CDATA[ payTime = #{payTime},]]></if>
+			<if test="queryResult != null and queryResult != ''"><![CDATA[ queryResult = #{queryResult},]]></if>
+			<if test="queryTime != null"><![CDATA[ queryTime = #{queryTime},]]></if>
+	 		<if test="status != null"><![CDATA[ status = #{status},]]></if>
+		</set>
+		 <![CDATA[ WHERE id = #{id} ]]>
+	</update>
+	
+	<!-- 删除记录 -->
+	<update id="delete" parameterType="com.aoying.loan.cust.trade.pojo.TradeOrderPojo">
+		<![CDATA[ DELETE FROM tradeorder where id = #{id} ]]>
+	</update>
+</mapper> 

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<!--【sysdictionary 字典表】sql -->
+<mapper namespace="com.aoying.loan.cust.sys.dao.SysDictionaryDao">
+	<!-- ==============================非基础操作======================================= -->
+	
+	<!-- ==============================基础操作======================================= -->
+	<!--根据条件得到列表 -->
+	<select id="selectList" parameterType="com.aoying.loan.cust.sys.pojo.SysDictionaryPojo" resultType="com.aoying.loan.cust.sys.pojo.SysDictionaryPojo">
+		<![CDATA[ 
+			SELECT id,code,jsonStr,orderNo,status,remark
+			FROM sysdictionary 
+		]]>
+	</select>
+
+	<!--根据id得到记录 -->
+	<select id="selectUnique" parameterType="com.aoying.loan.cust.sys.pojo.SysDictionaryPojo" resultType="com.aoying.loan.cust.sys.pojo.SysDictionaryPojo">
+		<![CDATA[ 
+			SELECT id,code,jsonStr,orderNo,status,remark
+			FROM sysdictionary
+		]]>
+		<where>
+			<choose>
+				<when test="id != null"> id = #{id} </when>
+				<when test="code != null and code != ''"> code = #{code} </when>
+				<otherwise>1 = 0</otherwise>
+			</choose>
+		</where>
+	</select>
+
+	<!-- 新增记录 -->
+	<insert id="insert" parameterType="com.aoying.loan.cust.sys.pojo.SysDictionaryPojo"
+		useGeneratedKeys="true"	keyProperty="id" keyColumn="id">
+		<![CDATA[ 
+			INSERT INTO sysdictionary (
+			    id,code,jsonStr,orderNo,status,remark
+			) VALUES (
+				#{id},#{code},#{jsonStr},#{orderNo},#{status},#{remark}
+			)
+		]]>
+	</insert>
+	
+	<!-- 批量新增记录 -->
+	<insert id="insertList" parameterType="com.aoying.loan.cust.sys.pojo.SysDictionaryPojo">
+		<![CDATA[ 
+			INSERT INTO sysdictionary (
+			    id,code,jsonStr,orderNo,status,remark
+			) VALUES (
+				#{id},#{code},#{jsonStr},#{orderNo},#{status},#{remark}
+			)
+		]]>
+	</insert>
+	
+	<!-- 修改记录 -->
+	<update id="update" parameterType="com.aoying.loan.cust.sys.pojo.SysDictionaryPojo">
+		<![CDATA[ UPDATE sysdictionary]]>
+		<set>
+	 		<if test="id != null"><![CDATA[ id = #{id},]]></if>
+	 		<if test="code != null and code != ''"><![CDATA[ code = #{code},]]></if>
+	 		<if test="jsonStr != null and jsonStr != ''"><![CDATA[ jsonStr = #{jsonStr},]]></if>
+	 		<if test="orderNo != null"><![CDATA[ orderNo = #{orderNo},]]></if>
+	 		<if test="status != null"><![CDATA[ status = #{status},]]></if>
+	 		<if test="remark != null and remark != ''"><![CDATA[ remark = #{remark},]]></if>
+		</set>
+		 <![CDATA[ WHERE id = #{id} ]]>
+	</update>
+	
+	<!-- 删除记录 -->
+	<update id="delete" parameterType="com.aoying.loan.cust.sys.pojo.SysDictionaryPojo">
+		<![CDATA[ DELETE FROM sysdictionary where id = #{id} ]]>
+	</update>
+</mapper> 

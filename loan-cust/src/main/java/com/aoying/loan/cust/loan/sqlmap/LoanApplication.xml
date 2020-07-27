@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<!--【loanapplication 贷款申请】sql -->
+<mapper namespace="com.aoying.loan.cust.loan.dao.LoanApplicationDao">
+	<!-- ==============================非基础操作======================================= -->
+	<!--提交贷款申请，修改数据状态-->
+	<update id="updateSubmit" parameterType="com.aoying.loan.cust.loan.pojo.LoanApplicationPojo">
+		<![CDATA[
+ 			update loanApplication set status = #{status}, submitTime = #{submitTime} where custId = #{custId} and status < #{status}
+		]]>
+	</update>
+
+	<update id="updateApplyAuditRefused" parameterType="com.aoying.loan.cust.loan.pojo.LoanApplicationPojo">
+		<![CDATA[
+ 			update loanApplication set status = 22, auditTime = #{auditTime} where status = 20 and submitTime < #{submitTime}
+		]]>
+	</update>
+
+	<select id="getApplyAuditRefused" parameterType="com.aoying.loan.cust.loan.pojo.LoanApplicationPojo" resultType="com.aoying.loan.cust.loan.pojo.LoanApplicationPojo">
+		select ci.telNoEnc from loanApplication la left join custInfo ci on la.custId = ci.id where la.status = 22 and la.auditTime = #{auditTime}
+	</select>
+
+	<!-- ==============================基础操作======================================= -->
+	<!--根据条件得到列表 -->
+	<select id="selectList" parameterType="com.aoying.loan.cust.loan.pojo.LoanApplicationPojo" resultType="com.aoying.loan.cust.loan.pojo.LoanApplicationPojo">
+		<![CDATA[ 
+			SELECT id,custId,loanAmount,loanPeriod,education,industry,status,createTime,auditTime
+			FROM loanapplication 
+		]]>
+	</select>
+
+	<!--根据id得到记录 -->
+	<select id="selectUnique" parameterType="com.aoying.loan.cust.loan.pojo.LoanApplicationPojo" resultType="com.aoying.loan.cust.loan.pojo.LoanApplicationPojo">
+		<![CDATA[ 
+			SELECT id,custId,loanAmount,loanPeriod,education,industry,status,createTime,auditTime
+			FROM loanapplication
+		]]>
+		<where>
+			<choose>
+				<when test="id != null"> id = #{id} </when>
+				<when test="custId != null"> custId = #{custId} </when>
+				<otherwise>1 = 0</otherwise>
+			</choose>
+		</where>
+	</select>
+
+	<!-- 新增记录 -->
+	<insert id="insert" parameterType="com.aoying.loan.cust.loan.pojo.LoanApplicationPojo"
+		useGeneratedKeys="true"	keyProperty="id" keyColumn="id">
+		<![CDATA[ 
+			INSERT INTO loanapplication (
+			    id,custId,loanAmount,loanPeriod,education,industry,status,createTime,auditTime
+			) VALUES (
+				#{id},#{custId},#{loanAmount},#{loanPeriod},#{education},#{industry},#{status},#{createTime},#{auditTime}
+			)
+		]]>
+	</insert>
+	
+	<!-- 批量新增记录 -->
+	<insert id="insertList" parameterType="com.aoying.loan.cust.loan.pojo.LoanApplicationPojo">
+		<![CDATA[ 
+			INSERT INTO loanapplication (
+			    id,custId,loanAmount,loanPeriod,education,industry,status,createTime,auditTime
+			) VALUES (
+				#{id},#{custId},#{loanAmount},#{loanPeriod},#{education},#{industry},#{status},#{createTime},#{auditTime}
+			)
+		]]>
+	</insert>
+	
+	<!-- 修改记录 -->
+	<update id="update" parameterType="com.aoying.loan.cust.loan.pojo.LoanApplicationPojo">
+		<![CDATA[ UPDATE loanapplication]]>
+		<set>
+			<if test="loanAmount != null"><![CDATA[ loanAmount = #{loanAmount},]]></if>
+			<if test="loanPeriod != null"><![CDATA[ loanPeriod = #{loanPeriod},]]></if>
+			<if test="education != null"><![CDATA[ education = #{education},]]></if>
+	 		<if test="industry != null"><![CDATA[ industry = #{industry},]]></if>
+	 		<if test="status != null"><![CDATA[ status = #{status},]]></if>
+	 		<if test="auditTime != null"><![CDATA[ auditTime = #{auditTime},]]></if>
+		</set>
+		<where>
+			<choose>
+				<when test="id != null"> id = #{id} </when>
+				<when test="custId != null"> custId = #{custId} </when>
+				<otherwise>1 = 0</otherwise>
+			</choose>
+		</where>
+	</update>
+	
+	<!-- 删除记录 -->
+	<update id="delete" parameterType="com.aoying.loan.cust.loan.pojo.LoanApplicationPojo">
+		<![CDATA[ DELETE FROM loanapplication where id = #{id} ]]>
+	</update>
+</mapper> 

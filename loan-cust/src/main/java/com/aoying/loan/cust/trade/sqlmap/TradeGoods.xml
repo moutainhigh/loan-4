@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<!--【tradegoods 交易商品】sql -->
+<mapper namespace="com.aoying.loan.cust.trade.dao.TradeGoodsDao">
+	<!-- ==============================非基础操作======================================= -->
+	<!--更新申请人数，每次随机增加0～3人-->
+	<update id="updateApplyNum">
+		<![CDATA[ update tradeGoods set num = num + FLOOR(RAND() * 4) where status = 1 ]]>
+	</update>
+
+	<!-- ==============================基础操作======================================= -->
+	<!--根据条件得到列表 -->
+	<select id="selectList" parameterType="com.aoying.loan.cust.trade.pojo.TradeGoodsPojo" resultType="com.aoying.loan.cust.trade.pojo.TradeGoodsPojo">
+		<![CDATA[ 
+			SELECT id,name,description,num,numText,btnText,btnTextStr,displayText,iconUrl,targetUrlStr,targetH5Str,amount,discount,createrId,createrName,
+				createTime,modId,modName,modTime,status,field1,field2,field3,field4
+			FROM tradegoods WHERE status <> 0
+		]]>
+	</select>
+
+	<!--根据id得到记录 -->
+	<select id="selectUnique" parameterType="com.aoying.loan.cust.trade.pojo.TradeGoodsPojo" resultType="com.aoying.loan.cust.trade.pojo.TradeGoodsPojo">
+		<![CDATA[ 
+			SELECT id,name,description,num,numText,btnText,btnTextStr,displayText,iconUrl,targetUrlStr,targetH5Str,amount,discount,createrId,createrName,
+				createTime,modId,modName,modTime,status,field1,field2,field3,field4
+			FROM tradegoods WHERE id = #{id}
+		]]>
+		<if test="status != null"><![CDATA[ AND status = #{status} ]]></if>
+	</select>
+
+	<!-- 新增记录 -->
+	<insert id="insert" parameterType="com.aoying.loan.cust.trade.pojo.TradeGoodsPojo"
+		useGeneratedKeys="true"	keyProperty="id" keyColumn="id">
+		<![CDATA[ 
+			INSERT INTO tradegoods (
+			    id,name,description,num,numText,btnText,btnTextStr,displayText,iconUrl,targetUrlStr,targetH5Str,amount,discount,createrId,createrName,
+				createTime,modId,modName,modTime,status,field1,field2,field3,field4
+			) VALUES (
+				#{id},#{name},#{description},#{num},#{numText},#{btnText},#{btnTextStr},#{displayText},#{iconUrl},#{targetUrlStr},#{targetH5Str},#{amount},#{discount},#{createrId},#{createrName},
+				#{createTime},#{modId},#{modName},#{modTime},#{status},#{field1},#{field2},#{field3},#{field4}
+			)
+		]]>
+	</insert>
+	
+	<!-- 批量新增记录 -->
+	<insert id="insertList" parameterType="com.aoying.loan.cust.trade.pojo.TradeGoodsPojo">
+		<![CDATA[ 
+			INSERT INTO tradegoods (
+			    id,name,description,num,numText,btnText,btnTextStr,displayText,iconUrl,targetUrlStr,targetH5Str,amount,discount,createrId,createrName,
+				createTime,modId,modName,modTime,status,field1,field2,field3,field4
+			) VALUES (
+				#{id},#{name},#{description},#{num},#{numText},#{btnText},#{btnTextStr},#{displayText},#{iconUrl},#{targetUrlStr},#{targetH5Str},#{amount},#{discount},#{createrId},#{createrName},
+				#{createTime},#{modId},#{modName},#{modTime},#{status},#{field1},#{field2},#{field3},#{field4}
+			)
+		]]>
+	</insert>
+	
+	<!-- 修改记录 -->
+	<update id="update" parameterType="com.aoying.loan.cust.trade.pojo.TradeGoodsPojo">
+		<![CDATA[ UPDATE tradegoods]]>
+		<set>
+	 		<if test="id != null"><![CDATA[ id = #{id},]]></if>
+	 		<if test="name != null and name != ''"><![CDATA[ name = #{name},]]></if>
+			<if test="description != null and description != ''"><![CDATA[ description = #{description},]]></if>
+			<if test="num != null"><![CDATA[ num = #{num},]]></if>
+			<if test="numText != null and numText != ''"><![CDATA[ numText = #{numText},]]></if>
+			<if test="btnText != null and btnText != ''"><![CDATA[ btnText = #{btnText},]]></if>
+			<if test="btnTextStr != null and btnTextStr != ''"><![CDATA[ btnTextStr = #{btnTextStr},]]></if>
+			<if test="displayText != null and displayText != ''"><![CDATA[ displayText = #{displayText},]]></if>
+			<if test="iconUrl != null and iconUrl != ''"><![CDATA[ iconUrl = #{iconUrl},]]></if>
+			<if test="targetUrlStr != null and targetUrlStr != ''"><![CDATA[ targetUrlStr = #{targetUrlStr},]]></if>
+			<if test="targetH5Str != null and targetH5Str != ''"><![CDATA[ targetH5Str = #{targetH5Str},]]></if>
+	 		<if test="amount != null"><![CDATA[ amount = #{amount},]]></if>
+	 		<if test="discount != null"><![CDATA[ discount = #{discount},]]></if>
+	 		<if test="createrId != null"><![CDATA[ createrId = #{createrId},]]></if>
+	 		<if test="createrName != null and createrName != ''"><![CDATA[ createrName = #{createrName},]]></if>
+	 		<if test="createTime != null"><![CDATA[ createTime = #{createTime},]]></if>
+	 		<if test="modId != null"><![CDATA[ modId = #{modId},]]></if>
+	 		<if test="modName != null and modName != ''"><![CDATA[ modName = #{modName},]]></if>
+	 		<if test="modTime != null"><![CDATA[ modTime = #{modTime},]]></if>
+			<if test="status != null"><![CDATA[ status = #{status},]]></if>
+			<if test="field1 != null"><![CDATA[ field1 = #{field1},]]></if>
+			<if test="field2 != null"><![CDATA[ field2 = #{field2},]]></if>
+			<if test="field3 != null"><![CDATA[ field3 = #{field3},]]></if>
+			<if test="field4 != null"><![CDATA[ field4 = #{field4},]]></if>
+		</set>
+		 <![CDATA[ WHERE id = #{id} ]]>
+	</update>
+	
+	<!-- 删除记录 -->
+	<update id="delete" parameterType="com.aoying.loan.cust.trade.pojo.TradeGoodsPojo">
+		<![CDATA[ DELETE FROM tradegoods where id = #{id} ]]>
+	</update>
+</mapper> 

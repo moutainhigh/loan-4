@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<!--【appchannel APP渠道表】sql -->
+<mapper namespace="com.aoying.loan.cust.app.dao.AppChannelDao">
+	<!-- ==============================非基础操作======================================= -->
+	
+	<!-- ==============================基础操作======================================= -->
+	<!--根据条件得到列表 -->
+	<select id="selectList" parameterType="com.aoying.loan.cust.app.pojo.AppChannelPojo" resultType="com.aoying.loan.cust.app.pojo.AppChannelPojo">
+		<![CDATA[ 
+			SELECT id,name,`desc`,appUrl,type,`release`,displayMode,auditVerId,lowestVerId,highestVerId,createrId,createrName,createTime,modId,
+				modName,modTime,status
+			FROM appchannel 
+		]]>
+	</select>
+
+	<!--根据id得到记录 -->
+	<select id="selectUnique" parameterType="com.aoying.loan.cust.app.pojo.AppChannelPojo" resultType="com.aoying.loan.cust.app.pojo.AppChannelPojo">
+		<![CDATA[ 
+			SELECT id,name,`desc`,appUrl,type,`release`,displayMode,auditVerId,lowestVerId,highestVerId,createrId,createrName,createTime,modId,
+				modName,modTime,status
+			FROM appchannel WHERE id = #{id}
+		]]>
+	</select>
+
+	<!-- 新增记录 -->
+	<insert id="insert" parameterType="com.aoying.loan.cust.app.pojo.AppChannelPojo"
+		useGeneratedKeys="true"	keyProperty="id" keyColumn="id">
+		<![CDATA[ 
+			INSERT INTO appchannel (
+			    id,name,`desc`,appUrl,type,`release`,displayMode,auditVerId,lowestVerId,highestVerId,createrId,createrName,createTime,modId,
+				modName,modTime,status
+			) VALUES (
+				#{id},#{name},#{desc},#{appUrl},#{type},#{release},#{displayMode},#{auditVerId},#{lowestVerId},#{highestVerId},
+				#{createrId},#{createrName},#{createTime},#{modId},#{modName},#{modTime},#{status}
+			)
+		]]>
+	</insert>
+	
+	<!-- 批量新增记录 -->
+	<insert id="insertList" parameterType="com.aoying.loan.cust.app.pojo.AppChannelPojo">
+		<![CDATA[ 
+			INSERT INTO appchannel (
+			    id,name,`desc`,appUrl,type,`release`,displayMode,auditVerId,lowestVerId,highestVerId,createrId,createrName,createTime,modId,
+				modName,modTime,status
+			) VALUES (
+				#{id},#{name},#{desc},#{appUrl},#{type},#{release},#{displayMode},#{auditVerId},#{lowestVerId},#{highestVerId},
+				#{createrId},#{createrName},#{createTime},#{modId},#{modName},#{modTime},#{status}
+			)
+		]]>
+	</insert>
+	
+	<!-- 修改记录 -->
+	<update id="update" parameterType="com.aoying.loan.cust.app.pojo.AppChannelPojo">
+		<![CDATA[ UPDATE appchannel]]>
+		<set>
+			<![CDATA[ auditVerId = #{auditVerId},]]>
+
+	 		<if test="name != null and name != ''"><![CDATA[ name = #{name},]]></if>
+			<if test="desc != null and desc != ''"><![CDATA[ `desc` = #{desc},]]></if>
+			<if test="appUrl != null and appUrl != ''"><![CDATA[ appUrl = #{appUrl},]]></if>
+			<if test="type != null"><![CDATA[ type = #{type},]]></if>
+			<if test="release != null"><![CDATA[ `release` = #{release},]]></if>
+			<if test="displayMode != null"><![CDATA[ displayMode = #{displayMode},]]></if>
+			<if test="lowestVerId != null"><![CDATA[ lowestVerId = #{lowestVerId},]]></if>
+			<if test="highestVerId != null"><![CDATA[ highestVerId = #{highestVerId},]]></if>
+			<if test="createrId != null"><![CDATA[ createrId = #{createrId},]]></if>
+	 		<if test="createrName != null and createrName != ''"><![CDATA[ createrName = #{createrName},]]></if>
+	 		<if test="createTime != null"><![CDATA[ createTime = #{createTime},]]></if>
+	 		<if test="modId != null"><![CDATA[ modId = #{modId},]]></if>
+	 		<if test="modName != null and modName != ''"><![CDATA[ modName = #{modName},]]></if>
+	 		<if test="modTime != null"><![CDATA[ modTime = #{modTime},]]></if>
+	 		<if test="status != null"><![CDATA[ status = #{status},]]></if>
+		</set>
+		 <![CDATA[ WHERE id = #{id} ]]>
+	</update>
+	
+	<!-- 删除记录 -->
+	<update id="delete" parameterType="com.aoying.loan.cust.app.pojo.AppChannelPojo">
+		<![CDATA[ DELETE FROM appchannel where id = #{id} ]]>
+	</update>
+</mapper> 

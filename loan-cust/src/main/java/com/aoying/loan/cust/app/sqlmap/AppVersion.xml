@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<!--【appversion APP版本表】sql -->
+<mapper namespace="com.aoying.loan.cust.app.dao.AppVersionDao">
+	<!-- ==============================非基础操作======================================= -->
+
+	<!-- ==============================基础操作======================================= -->
+	<!--根据条件得到列表 -->
+	<select id="selectList" parameterType="com.aoying.loan.cust.app.pojo.AppVersionPojo" resultType="com.aoying.loan.cust.app.pojo.AppVersionPojo">
+		<![CDATA[ 
+			SELECT id,verText,lowestVerId,lowestVerText,code,name,remark,createrId,
+				createrName,createTime,modId,modName,modTime,status
+			FROM appversion ORDER BY id DESC
+		]]>
+	</select>
+
+	<!--根据id得到记录 -->
+	<select id="selectUnique" parameterType="com.aoying.loan.cust.app.pojo.AppVersionPojo" resultType="com.aoying.loan.cust.app.pojo.AppVersionPojo">
+		<![CDATA[ 
+			SELECT id,verText,lowestVerId,lowestVerText,code,name,remark,createrId,
+				createrName,createTime,modId,modName,modTime,status
+			FROM appversion
+		]]>
+		<choose>
+			<when test="id != null"> WHERE id = #{id} </when>
+			<otherwise> ORDER BY id DESC limit 1</otherwise>
+		</choose>
+	</select>
+
+	<!-- 新增记录 -->
+	<insert id="insert" parameterType="com.aoying.loan.cust.app.pojo.AppVersionPojo"
+		useGeneratedKeys="true"	keyProperty="id" keyColumn="id">
+		<![CDATA[ 
+			INSERT INTO appversion (
+			    id,verText,lowestVerId,lowestVerText,code,name,remark,createrId,
+				createrName,createTime,modId,modName,modTime,status
+			) VALUES (
+				#{id},#{verText},#{lowestVerId},#{lowestVerText},#{code},#{name},#{remark},#{createrId},
+				#{createrName},#{createTime},#{modId},#{modName},#{modTime},#{status}
+			)
+		]]>
+	</insert>
+	
+	<!-- 批量新增记录 -->
+	<insert id="insertList" parameterType="com.aoying.loan.cust.app.pojo.AppVersionPojo">
+		<![CDATA[ 
+			INSERT INTO appversion (
+			    id,verText,lowestVerId,lowestVerText,code,name,remark,createrId,
+				createrName,createTime,modId,modName,modTime,status
+			) VALUES (
+				#{id},#{verText},#{lowestVerId},#{lowestVerText},#{code},#{name},#{remark},#{createrId},
+				#{createrName},#{createTime},#{modId},#{modName},#{modTime},#{status}
+			)
+		]]>
+	</insert>
+	
+	<!-- 修改记录 -->
+	<update id="update" parameterType="com.aoying.loan.cust.app.pojo.AppVersionPojo">
+		<![CDATA[ UPDATE appversion]]>
+		<set>
+	 		<if test="id != null"><![CDATA[ id = #{id},]]></if>
+	 		<if test="verText != null and verText != ''"><![CDATA[ verText = #{verText},]]></if>
+	 		<if test="lowestVerId != null"><![CDATA[ lowestVerId = #{lowestVerId},]]></if>
+	 		<if test="lowestVerText != null and lowestVerText != ''"><![CDATA[ lowestVerText = #{lowestVerText},]]></if>
+	 		<if test="code != null and code != ''"><![CDATA[ code = #{code},]]></if>
+	 		<if test="name != null and name != ''"><![CDATA[ name = #{name},]]></if>
+	 		<if test="remark != null and remark != ''"><![CDATA[ remark = #{remark},]]></if>
+	 		<if test="createrId != null"><![CDATA[ createrId = #{createrId},]]></if>
+	 		<if test="createrName != null and createrName != ''"><![CDATA[ createrName = #{createrName},]]></if>
+	 		<if test="createTime != null"><![CDATA[ createTime = #{createTime},]]></if>
+	 		<if test="modId != null"><![CDATA[ modId = #{modId},]]></if>
+	 		<if test="modName != null and modName != ''"><![CDATA[ modName = #{modName},]]></if>
+	 		<if test="modTime != null"><![CDATA[ modTime = #{modTime},]]></if>
+	 		<if test="status != null"><![CDATA[ status = #{status},]]></if>
+		</set>
+		 <![CDATA[ WHERE id = #{id} ]]>
+	</update>
+	
+	<!-- 删除记录 -->
+	<update id="delete" parameterType="com.aoying.loan.cust.app.pojo.AppVersionPojo">
+		<![CDATA[ DELETE FROM appversion where id = #{id} ]]>
+	</update>
+</mapper> 

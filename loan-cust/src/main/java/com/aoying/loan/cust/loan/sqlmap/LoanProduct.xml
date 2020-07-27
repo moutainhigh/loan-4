@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<!--【loanproduct 贷款产品表】sql -->
+<mapper namespace="com.aoying.loan.cust.loan.dao.LoanProductDao">
+	<!-- ==============================非基础操作======================================= -->
+	<!--更新申请人数，每次随机增加0～3人-->
+	<update id="updateApplyNum">
+		<![CDATA[ update loanProduct set applyNum = applyNum + FLOOR(RAND() * 4) ]]>
+	</update>
+
+	<!--增加点击量-->
+	<update id="addPv" parameterType="Long">
+		<![CDATA[ update loanProduct set pv = pv + 1 where id = #{id} ]]>
+	</update>
+	
+	<select id="getProductData" resultType="map">
+		<![CDATA[ select sum(if(status=1,1,0)) today, count(1) total from loanProduct where status <> 0 ]]>
+	</select>
+	
+	<!-- ==============================基础操作======================================= -->
+	<!--根据条件得到列表 -->
+	<select id="selectList" parameterType="com.aoying.loan.cust.loan.pojo.LoanProductPojo" resultType="com.aoying.loan.cust.loan.pojo.LoanProductPojo">
+		<![CDATA[ 
+			SELECT id,name,icon,url,shortUrl,limitName,limitDisplay,limitMin,`limit`,periodName,periodDisplay,periodMin,
+				periodMax,rateName,rateDisplay,rate,`describe`,labelStr,applyNum,weight,activable,orderCode,pv,createrId,
+				createrName,createTime,modId,modName,modTime,status
+			FROM loanproduct 
+		]]>
+		<where>
+			<![CDATA[ status <> 0 ]]>
+			<if test="shortUrl != null"><![CDATA[ and shortUrl = #{shortUrl} ]]></if>
+			<if test="weight != null and weight != ''"><![CDATA[ and weight like '%${weight}%' ]]></if>
+			<if test="labelStr != null and labelStr != ''"><![CDATA[ and labelStr like '%${labelStr}%' ]]></if>
+			<if test="limitMin != null"><![CDATA[ and `limit` > #{limitMin} ]]></if>
+			<if test="limitMax != null"><![CDATA[ and `limit` <= #{limitMax} ]]></if>
+			<if test="periodMin != null"><![CDATA[ and periodMax > #{periodMin} ]]></if>
+			<if test="periodMax != null"><![CDATA[ and periodMax <= #{periodMax} ]]></if>
+			<if test="status != null"><![CDATA[ and status = #{status} ]]></if>
+			<if test="orderByType != null and orderByType == 1"><![CDATA[ and orderCode > 0 ]]></if>
+			<if test="orderByType != null and orderByType == 2"><![CDATA[ and orderCode = 0 ]]></if>
+		</where>
+		<choose>
+			<when test="orderByName == null"><![CDATA[ ORDER BY orderCode DESC, pv DESC ]]></when>
+			<otherwise>
+				<![CDATA[ ORDER BY #{orderByName} ]]>
+				<if test="orderByDesc != null and orderByDesc"> DESC </if>
+			</otherwise>
+		</choose>
+	</select>
+
+	<!--根据id得到记录 -->
+	<select id="selectUnique" parameterType="com.aoying.loan.cust.loan.pojo.LoanProductPojo" resultType="com.aoying.loan.cust.loan.pojo.LoanProductPojo">
+		<![CDATA[ 
+			SELECT id,name,icon,url,shortUrl,limitName,limitDisplay,limitMin,`limit`,periodName,periodDisplay,periodMin,
+				periodMax,rateName,rateDisplay,rate,`describe`,labelStr,applyNum,weight,activable,orderCode,pv,createrId,
+				createrName,createTime,modId,modName,modTime,status
+			FROM loanproduct WHERE id = #{id}
+		]]>
+		<if test="status != null"><![CDATA[ and status = #{status} ]]></if>
+	</select>
+
+	<!-- 新增记录 -->
+	<insert id="insert" parameterType="com.aoying.loan.cust.loan.pojo.LoanProductPojo"
+		useGeneratedKeys="true"	keyProperty="id" keyColumn="id">
+		<![CDATA[ 
+			INSERT INTO loanproduct (
+			    id,name,icon,url,shortUrl,limitName,limitDisplay,limitMin,`limit`,periodName,periodDisplay,periodMin,
+				periodMax,rateName,rateDisplay,rate,`describe`,labelStr,applyNum,weight,activable,orderCode,pv,createrId,
+				createrName,createTime,modId,modName,modTime,status
+			) VALUES (
+				#{id},#{name},#{icon},#{url},#{shortUrl},#{limitName},#{limitDisplay},#{limitMin},#{limit},#{periodName},#{periodDisplay},#{periodMin},
+				#{periodMax},#{rateName},#{rateDisplay},#{rate},#{describe},#{labelStr},#{applyNum},#{weight},#{activable},#{orderCode},#{pv},#{createrId},
+				#{createrName},#{createTime},#{modId},#{modName},#{modTime},#{status}
+			)
+		]]>
+	</insert>
+	
+	<!-- 批量新增记录 -->
+	<insert id="insertList" parameterType="com.aoying.loan.cust.loan.pojo.LoanProductPojo">
+		<![CDATA[ 
+			INSERT INTO loanproduct (
+			    id,name,icon,url,shortUrl,limitName,limitDisplay,limitMin,`limit`,periodName,periodDisplay,periodMin,
+				periodMax,rateName,rateDisplay,rate,`describe`,labelStr,applyNum,weight,activable,orderCode,pv,createrId,
+				createrName,createTime,modId,modName,modTime,status
+			) VALUES (
+				#{id},#{name},#{icon},#{url},#{shortUrl},#{limitName},#{limitDisplay},#{limitMin},#{limit},#{periodName},#{periodDisplay},#{periodMin},
+				#{periodMax},#{rateName},#{rateDisplay},#{rate},#{describe},#{labelStr},#{applyNum},#{weight},#{activable},#{orderCode},#{pv},#{createrId},
+				#{createrName},#{createTime},#{modId},#{modName},#{modTime},#{status}
+			)
+		]]>
+	</insert>
+	
+	<!-- 修改记录 -->
+	<update id="update" parameterType="com.aoying.loan.cust.loan.pojo.LoanProductPojo">
+		<![CDATA[ UPDATE loanproduct]]>
+		<set>
+	 		<if test="name != null and name != ''"><![CDATA[ name = #{name},]]></if>
+	 		<if test="icon != null and icon != ''"><![CDATA[ icon = #{icon},]]></if>
+			<if test="url != null and url != ''"><![CDATA[ url = #{url},]]></if>
+			<if test="shortUrl != null"><![CDATA[ shortUrl = #{shortUrl},]]></if>
+			<if test="limitName != null and limitName != ''"><![CDATA[ limitName = #{limitName},]]></if>
+			<if test="limitDisplay != null and limitDisplay != ''"><![CDATA[ limitDisplay = #{limitDisplay},]]></if>
+			<if test="limitMin != null"><![CDATA[ limitMin = #{limitMin},]]></if>
+			<if test="limit != null"><![CDATA[ `limit` = #{limit},]]></if>
+			<if test="periodName != null and periodName != ''"><![CDATA[ periodName = #{periodName},]]></if>
+			<if test="periodDisplay != null and periodDisplay != ''"><![CDATA[ periodDisplay = #{periodDisplay},]]></if>
+	 		<if test="periodMin != null"><![CDATA[ periodMin = #{periodMin},]]></if>
+	 		<if test="periodMax != null"><![CDATA[ periodMax = #{periodMax},]]></if>
+			<if test="rateName != null and rateName != ''"><![CDATA[ rateName = #{rateName},]]></if>
+			<if test="rateDisplay != null and rateDisplay != ''"><![CDATA[ rateDisplay = #{rateDisplay},]]></if>
+	 		<if test="rate != null"><![CDATA[ rate = #{rate},]]></if>
+	 		<if test="describe != null and describe != ''"><![CDATA[ `describe` = #{describe},]]></if>
+	 		<if test="labelStr != null and labelStr != ''"><![CDATA[ labelStr = #{labelStr},]]></if>
+	 		<if test="applyNum != null"><![CDATA[ applyNum = #{applyNum},]]></if>
+			<if test="weight != null"><![CDATA[ weight = #{weight},]]></if>
+			<if test="activable != null"><![CDATA[ activable = #{activable},]]></if>
+			<if test="orderCode != null"><![CDATA[ orderCode = #{orderCode},]]></if>
+			<if test="pv != null"><![CDATA[ pv = #{pv},]]></if>
+	 		<if test="createrId != null"><![CDATA[ createrId = #{createrId},]]></if>
+	 		<if test="createrName != null and createrName != ''"><![CDATA[ createrName = #{createrName},]]></if>
+	 		<if test="createTime != null"><![CDATA[ createTime = #{createTime},]]></if>
+	 		<if test="modId != null"><![CDATA[ modId = #{modId},]]></if>
+	 		<if test="modName != null and modName != ''"><![CDATA[ modName = #{modName},]]></if>
+	 		<if test="modTime != null"><![CDATA[ modTime = #{modTime},]]></if>
+	 		<if test="status != null"><![CDATA[ status = #{status},]]></if>
+		</set>
+		 <![CDATA[ WHERE id = #{id} ]]>
+	</update>
+	
+	<!-- 删除记录 -->
+	<update id="delete" parameterType="com.aoying.loan.cust.loan.pojo.LoanProductPojo">
+		<![CDATA[ DELETE FROM loanproduct where id = #{id} ]]>
+	</update>
+</mapper> 

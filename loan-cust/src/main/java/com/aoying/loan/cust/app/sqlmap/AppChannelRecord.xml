@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<!--【appchannelrecord APP渠道记录】sql -->
+<mapper namespace="com.aoying.loan.cust.app.dao.AppChannelRecordDao">
+	<!-- ==============================非基础操作======================================= -->
+	<select id="getList" parameterType="com.aoying.loan.cust.app.pojo.AppChannelRecordPojo" resultType="com.aoying.loan.cust.app.pojo.AppChannelRecordPojo">
+		select r.calDate as calDate
+		,floor(r.registeredVisitsActual*r.rate) as registeredVisits
+		,floor(r.activationVisitsActual*r.rate) as activationVisits
+		,floor(r.productVisitsActual*r.rate) as productVisits
+		,floor(r.reportVisitsActual*r.reportRate) as reportVisits
+
+
+		<if test="showActual != null and showActual">
+			,r.registeredVisitsActual as registeredVisitsActual
+			,r.activationVisitsActual as activationVisitsActual
+			,r.productVisitsActual as productVisitsActual
+			,r.rate as rate
+			,r.reportVisitsActual as reportVisitsActual
+			,r.reportRate as reportRate
+		</if>
+
+
+		from appChannelRecord r
+		<where>
+			<if test="channelId != null"><![CDATA[ and r.channelId = #{channelId} ]]></if>
+			<if test="beginDate != null"><![CDATA[ and r.calDate >= #{beginDate} ]]></if>
+			<if test="endDate != null"><![CDATA[ and r.calDate <= #{endDate} ]]></if>
+		</where>
+		order by r.calDate desc
+	</select>
+
+	<update id="updateRegVisits">
+		<![CDATA[
+			update appChannelRecord r
+			left join (select channelId chId, count(1) n from custInfo WHERE left(createTime,10) = curdate() group by channelId) t1
+			on r.calDate = curdate() and t1.chId = r.channelId
+			set r.registeredVisitsActual = ifnull(t1.n,0) where r.calDate = curdate() and r.registeredVisitsActual < ifnull(t1.n,0)
+		]]>
+	</update>
+
+	<update id="updateActVisits">
+		<![CDATA[
+			update appChannelRecord r
+			left join (select channelId chId, count(1) n from custInfo WHERE left(createTime,10) = curdate() and left(loginByAppTime,10) = curdate() group by channelId) t1
+			on r.calDate = curdate() and t1.chId = r.channelId
+			set r.activationVisitsActual = ifnull(t1.n,0) where r.calDate = curdate() and r.activationVisitsActual < ifnull(t1.n,0)
+		]]>
+	</update>
+
+	<update id="updateProVisits">
+		<![CDATA[
+			update appChannelRecord r
+			left join (select c.channelId chId, count(1) n from loanProductClickLog l
+				left join custInfo c on l.custId = c.id
+				WHERE left(l.createTime,10) = curdate() and left(l.createTime,10) = left(c.createTime,10) group by c.channelId) t2
+			on r.calDate = curdate() and t2.chId = r.channelId
+			set r.productVisitsActual = ifnull(t2.n,0) where r.calDate = curdate() and r.productVisitsActual < ifnull(t2.n,0)
+		]]>
+	</update>
+
+	<update id="updateReportVisits">
+		<![CDATA[
+			update appChannelRecord r
+			left join (select c.channelId chId, count(1) n from tradeOrder tor
+				left join custInfo c on tor.custId = c.id
+				WHERE left(tor.createTime,10) = curdate() and left(tor.createTime,10) = left(c.createTime,10) and tor.status = 21 group by c.channelId) t3
+			on r.calDate = curdate() and t3.chId = r.channelId
+			set r.reportVisitsActual = ifnull(t3.n,0) where r.calDate = curdate() and r.reportVisitsActual < ifnull(t3.n,0)
+		]]>
+	</update>
+
+	<insert id="insertByConfig">
+		<![CDATA[
+			insert into appChannelRecord (channelId, rate, registeredVisitsActual, activationVisitsActual, productVisitsActual, reportRate, reportVisitsActual, calDate)
+			select channelId, rate, 0, 0, 0, reportRate, 0, curdate() from appChannelConfig where status = 1
+		]]>
+	</insert>
+
+	<!-- ==============================基础操作======================================= -->
+	<!--根据条件得到列表 -->
+	<select id="selectList" parameterType="com.aoying.loan.cust.app.pojo.AppChannelRecordPojo" resultType="com.aoying.loan.cust.app.pojo.AppChannelRecordPojo">
+		<![CDATA[ 
+			SELECT id,channelId,rate,registeredVisitsActual,productVisitsActual,calDate
+			FROM appchannelrecord 
+		]]>
+	</select>
+
+	<!--根据id得到记录 -->
+	<select id="selectUnique" parameterType="com.aoying.loan.cust.app.pojo.AppChannelRecordPojo" resultType="com.aoying.loan.cust.app.pojo.AppChannelRecordPojo">
+		<![CDATA[ 
+			SELECT id,channelId,rate,registeredVisitsActual,productVisitsActual,calDate
+			FROM appchannelrecord WHERE id = #{id}
+		]]>
+	</select>
+
+	<!-- 新增记录 -->
+	<insert id="insert" parameterType="com.aoying.loan.cust.app.pojo.AppChannelRecordPojo"
+		useGeneratedKeys="true"	keyProperty="id" keyColumn="id">
+		<![CDATA[ 
+			INSERT INTO appchannelrecord (
+			    id,channelId,rate,registeredVisitsActual,productVisitsActual,calDate
+			) VALUES (
+				#{id},#{channelId},#{rate},#{registeredVisitsActual},#{productVisitsActual},#{calDate}
+			)
+		]]>
+	</insert>
+	
+	<!-- 批量新增记录 -->
+	<insert id="insertList" parameterType="com.aoying.loan.cust.app.pojo.AppChannelRecordPojo">
+		<![CDATA[ 
+			INSERT INTO appchannelrecord (
+			    id,channelId,rate,registeredVisitsActual,productVisitsActual,calDate
+			) VALUES (
+				#{id},#{channelId},#{rate},#{registeredVisitsActual},#{productVisitsActual},#{calDate}
+			)
+		]]>
+	</insert>
+	
+	<!-- 修改记录 -->
+	<update id="update" parameterType="com.aoying.loan.cust.app.pojo.AppChannelRecordPojo">
+		<![CDATA[ UPDATE appchannelrecord]]>
+		<set>
+	 		<if test="id != null"><![CDATA[ id = #{id},]]></if>
+	 		<if test="channelId != null"><![CDATA[ channelId = #{channelId},]]></if>
+	 		<if test="rate != null"><![CDATA[ rate = #{rate},]]></if>
+	 		<if test="registeredVisitsActual != null"><![CDATA[ registeredVisitsActual = #{registeredVisitsActual},]]></if>
+	 		<if test="productVisitsActual != null"><![CDATA[ productVisitsActual = #{productVisitsActual},]]></if>
+	 		<if test="calDate != null"><![CDATA[ calDate = #{calDate},]]></if>
+		</set>
+		 <![CDATA[ WHERE id = #{id} ]]>
+	</update>
+	
+	<!-- 删除记录 -->
+	<update id="delete" parameterType="com.aoying.loan.cust.app.pojo.AppChannelRecordPojo">
+		<![CDATA[ DELETE FROM appchannelrecord where id = #{id} ]]>
+	</update>
+</mapper> 

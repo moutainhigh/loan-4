@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<!--【loanreportoperators 贷款报告之运营商】sql -->
+<mapper namespace="com.aoying.loan.cust.loan.dao.LoanReportOperatorsDao">
+	<!-- ==============================非基础操作======================================= -->
+	
+	<!-- ==============================基础操作======================================= -->
+	<!--根据条件得到列表 -->
+	<select id="selectList" parameterType="com.aoying.loan.cust.loan.pojo.LoanReportOperatorsPojo" resultType="com.aoying.loan.cust.loan.pojo.LoanReportOperatorsPojo">
+		<![CDATA[ 
+			SELECT id,custId,orderId,reportId,idCardNameEnc as idCardNameHide,idCardCodeEnc as idCardCodeHide,telNoEnc as telNoHide,status,createTime,
+				transId,resultJson,errorCode,errorMsg,resultCode,resultLength,resultStatus
+			FROM loanreportoperators 
+		]]>
+	</select>
+
+	<!--根据id得到记录 -->
+	<select id="selectUnique" parameterType="com.aoying.loan.cust.loan.pojo.LoanReportOperatorsPojo" resultType="com.aoying.loan.cust.loan.pojo.LoanReportOperatorsPojo">
+		<![CDATA[
+			SELECT id,custId,orderId,reportId,idCardNameEnc as idCardNameHide,idCardCodeEnc as idCardCodeHide,telNoEnc as telNoHide,status,createTime,
+				transId,resultJson,errorCode,errorMsg,resultCode,resultLength,resultStatus
+			FROM loanreportoperators
+		]]>
+		<where>
+			<choose>
+				<when test="id != null"> id = #{id} </when>
+				<when test="orderId != null"> orderId = #{orderId} </when>
+				<when test="reportId != null"> reportId = #{reportId} </when>
+				<otherwise> 1 = 0 </otherwise>
+			</choose>
+			<if test="custId != null"><![CDATA[ AND custId = #{custId} ]]></if>
+		</where>
+	</select>
+
+	<!-- 新增记录 -->
+	<insert id="insert" parameterType="com.aoying.loan.cust.loan.pojo.LoanReportOperatorsPojo"
+		useGeneratedKeys="true"	keyProperty="id" keyColumn="id">
+		<![CDATA[ 
+			INSERT INTO loanreportoperators (
+			    id,custId,orderId,reportId,idCardNameEnc,idCardCodeEnc,telNoEnc,status,createTime,
+				transId,resultJson,errorCode,errorMsg,resultCode,resultLength,resultStatus
+			) VALUES (
+				#{id},#{custId},#{orderId},#{reportId},#{idCardNameEnc},#{idCardCodeEnc},#{telNoEnc},#{status},#{createTime},
+				#{transId},#{resultJson},#{errorCode},#{errorMsg},#{resultCode},#{resultLength},#{resultStatus}
+			)
+		]]>
+	</insert>
+	
+	<!-- 批量新增记录 -->
+	<insert id="insertList" parameterType="com.aoying.loan.cust.loan.pojo.LoanReportOperatorsPojo">
+		<![CDATA[ 
+			INSERT INTO loanreportoperators (
+			    id,custId,orderId,reportId,idCardNameEnc,idCardCodeEnc,telNoEnc,status,createTime,
+				transId,resultJson,errorCode,errorMsg,resultCode,resultLength,resultStatus
+			) VALUES (
+				#{id},#{custId},#{orderId},#{reportId},#{idCardNameEnc},#{idCardCodeEnc},#{telNoEnc},#{status},#{createTime},
+				#{transId},#{resultJson},#{errorCode},#{errorMsg},#{resultCode},#{resultLength},#{resultStatus}
+			)
+		]]>
+	</insert>
+	
+	<!-- 修改记录 -->
+	<update id="update" parameterType="com.aoying.loan.cust.loan.pojo.LoanReportOperatorsPojo">
+		<![CDATA[ UPDATE loanreportoperators]]>
+		<set>
+	 		<if test="id != null"><![CDATA[ id = #{id},]]></if>
+	 		<if test="custId != null"><![CDATA[ custId = #{custId},]]></if>
+			<if test="orderId != null"><![CDATA[ orderId = #{orderId},]]></if>
+			<if test="reportId != null"><![CDATA[ reportId = #{reportId},]]></if>
+	 		<if test="idCardNameEnc != null and idCardNameEnc != ''"><![CDATA[ idCardNameEnc = #{idCardNameEnc},]]></if>
+	 		<if test="idCardCodeEnc != null and idCardCodeEnc != ''"><![CDATA[ idCardCodeEnc = #{idCardCodeEnc},]]></if>
+	 		<if test="telNoEnc != null and telNoEnc != ''"><![CDATA[ telNoEnc = #{telNoEnc},]]></if>
+	 		<if test="status != null"><![CDATA[ status = #{status},]]></if>
+	 		<if test="createTime != null"><![CDATA[ createTime = #{createTime},]]></if>
+	 		<if test="transId != null and transId != ''"><![CDATA[ transId = #{transId},]]></if>
+	 		<if test="resultJson != null and resultJson != ''"><![CDATA[ resultJson = #{resultJson},]]></if>
+	 		<if test="errorCode != null and errorCode != ''"><![CDATA[ errorCode = #{errorCode},]]></if>
+	 		<if test="errorMsg != null and errorMsg != ''"><![CDATA[ errorMsg = #{errorMsg},]]></if>
+			<if test="resultCode != null"><![CDATA[ resultCode = #{resultCode},]]></if>
+			<if test="resultLength != null"><![CDATA[ resultLength = #{resultLength},]]></if>
+	 		<if test="resultStatus != null"><![CDATA[ resultStatus = #{resultStatus},]]></if>
+		</set>
+		 <![CDATA[ WHERE id = #{id} ]]>
+	</update>
+	
+	<!-- 删除记录 -->
+	<update id="delete" parameterType="com.aoying.loan.cust.loan.pojo.LoanReportOperatorsPojo">
+		<![CDATA[ DELETE FROM loanreportoperators where id = #{id} ]]>
+	</update>
+</mapper> 
