@@ -1,6 +1,8 @@
 package com.aoying.loan.mgmtservice.loan.controller;
 
 import java.util.List;
+
+import com.ds.api.util.HttpRequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -110,9 +112,19 @@ public class LoanApplicationForLargeControllerMgmt extends BaseController<LoanAp
     }
     }
      */
-    @RequestMapping("/mgmt/sendPro/v1")
-    public ResponseData send(List<Long> ids, ) {
-        loanApplicationForLargeService.update(pojo);
+    @RequestMapping("/mgmt/sendPro/dfrz/v1")
+    public ResponseData sendDf(List<Long> ids) {
+        for (Long id : ids){
+            LoanApplicationForLargePojo pojo = loanApplicationForLargeService.selectById(id);
+            // 1.查询用户是否存在
+
+            // 2.用户存在则直接失败，用户不存在，则进行同步
+        }
+        return ResponseData.succ(null);
+    }
+
+    @RequestMapping("/mgmt/sendPro/jjd/v1")
+    public ResponseData sendJjd(List<Long> ids) {
         return ResponseData.succ(null);
     }
 }

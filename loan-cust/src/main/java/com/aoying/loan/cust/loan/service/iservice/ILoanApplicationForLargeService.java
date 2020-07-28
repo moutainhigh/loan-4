@@ -15,4 +15,11 @@ public interface ILoanApplicationForLargeService extends IBaseService<LoanApplic
      * @param application
      */
     public void addOrUpdate(LoanApplicationForLargePojo application, SysAuthInfoPojo authInfo);
+
+    /**
+     * 根据id查询大额申请信息
+     * @param id
+     * @return
+     */
+    public LoanApplicationForLargePojo selectById(Long id);
 }

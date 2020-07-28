@@ -43,4 +43,11 @@ public class LoanApplicationForLargeService extends BaseService<LoanApplicationF
             this.update(application);
         }
     }
+
+    @Override
+    public LoanApplicationForLargePojo selectById(Long id) {
+        LoanApplicationForLargePojo p = new LoanApplicationForLargePojo();
+        p.setId(id);
+        return this.selectUnique(p);
+    }
 }
