@@ -1,6 +1,8 @@
 package com.aoying.loan.cust;
 
 import java.util.List;
+
+import com.dongfang.api.DongFangApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -120,6 +122,12 @@ public class LoanCustApplication extends WebMvcConfigurerAdapter {
 			return new YuanJinApi();
 		}
 	}
+
+	@Bean
+	public DongFangApi dongFangApi(DsConfig config) {
+		return new DongFangApi();
+	}
+
 
 	public static void main(String[] args) {
 		SpringApplication.run(LoanCustApplication.class, args);

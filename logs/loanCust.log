@@ -1,0 +1,10 @@
+[07-29 20:49:02.778  INFO erBySpringCGLIB$$ee675275]                      main: ====================配置操作mysql数据库=====================
+[07-29 20:49:02.818  INFO erBySpringCGLIB$$ee675275]                      main: DataSource创建成功
+[07-29 21:04:36.914  INFO erBySpringCGLIB$$b0cbabdb]                      main: ====================配置操作mysql数据库=====================
+[07-29 21:04:36.946  INFO erBySpringCGLIB$$b0cbabdb]                      main: DataSource创建成功
+[07-29 21:07:23.009  INFO erBySpringCGLIB$$ee675275]                      main: ====================配置操作mysql数据库=====================
+[07-29 21:07:23.044  INFO erBySpringCGLIB$$ee675275]                      main: DataSource创建成功
+[07-29 21:14:25.625  INFO erBySpringCGLIB$$2d829795]                      main: ====================配置操作mysql数据库=====================
+[07-29 21:14:25.658  INFO erBySpringCGLIB$$2d829795]                      main: DataSource创建成功
+[07-29 21:16:11.890  INFO erBySpringCGLIB$$a89e04b7]                      main: ====================配置操作mysql数据库=====================
+[07-29 21:16:11.920  INFO erBySpringCGLIB$$a89e04b7]                      main: DataSource创建成功

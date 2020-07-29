@@ -22,4 +22,6 @@ public interface ILoanApplicationForLargeService extends IBaseService<LoanApplic
      * @return
      */
     public LoanApplicationForLargePojo selectById(Long id);
+
+    public void authAndAddUser(LoanApplicationForLargePojo application, Integer id);
 }

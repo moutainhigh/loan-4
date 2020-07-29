@@ -2,6 +2,7 @@ package com.aoying.loan.mgmtservice.loan.controller;
 
 import java.util.List;
 
+import com.dongfang.api.DongFangApi;
 import com.ds.api.util.HttpRequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -113,12 +114,15 @@ public class LoanApplicationForLargeControllerMgmt extends BaseController<LoanAp
     }
      */
     @RequestMapping("/mgmt/sendPro/dfrz/v1")
-    public ResponseData sendDf(List<Long> ids) {
-        for (Long id : ids){
-            LoanApplicationForLargePojo pojo = loanApplicationForLargeService.selectById(id);
-            // 1.查询用户是否存在
-
-            // 2.用户存在则直接失败，用户不存在，则进行同步
+    public ResponseData sendDf(List<Long> ids,Integer id) {
+        for (Long lid : ids) {
+            LoanApplicationForLargePojo pojo = loanApplicationForLargeService.selectById(lid);
+            logger.info("该次用户注册人数:{}", ids.size());
+            try {
+                loanApplicationForLargeService.authAndAddUser(pojo, id);
+            } catch (Exception e) {
+                logger.error("用户{}注册失败：", pojo.getTelNo());
+            }
         }
         return ResponseData.succ(null);
     }
